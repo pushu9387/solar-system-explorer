@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>í¼Œ Solar System Explorer</title>
+    <style>
+  /* ========================================
+   RESPONSIVE SOLAR SYSTEM - 2025 STYLE
+   ======================================== */
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  background-color: #000;
+  touch-action: none;
+}
+
+#ui {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: calc(100% - 20px);
+  max-width: 320px;
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 0 16px rgba(0, 255, 200, 0.08);
+  z-index: 100;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+#ui h2 {
+  margin-top: 0;
+  color: #00ffe0;
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+}
+
+.control-group {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.control-group label {
+  color: #ffffff;
+  font-size: 0.9rem;
+  flex: 1;
+}
+
+.control-group input[type="checkbox"],
+.control-group input[type="radio"] {
+  transform: scale(1.2);
+  accent-color: #00ffc8;
+  cursor: pointer;
+}
+
+.control-group input[type="range"] {
+  width: 100%;
+  accent-color: #00ffe0;
+  cursor: pointer;
+}
+
+.control-group button {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(30, 30, 30, 0.5);
+  color: #ffffff;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.control-group button:hover {
+  background: rgba(0, 255, 200, 0.1);
+}
+
+/* Loading screen */
+#loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  color: white;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+#loading-progress {
+  width: 80%;
+  max-width: 300px;
+  margin: 20px 0;
+}
+
+/* Info panel */
+#info-panel {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: calc(100% - 20px);
+  max-width: 300px;
+  background: rgba(20, 20, 20, 0.8);
+  border-radius: 12px;
+  padding: 15px;
+  color: white;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+
+#info-panel h2 {
+  margin-top: 0;
+  color: #00ffe0;
+  font-size: 1.1rem;
+}
+
+.planet-fact {
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.highlight {
+  color: #00ffc8;
+  font-weight: bold;
+}
+
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 5px;
+}
+
+/* Tour controls */
+#tour-controls {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 100;
+  width: 90%;
+  max-width: 400px;
+  justify-content: center;
+}
+
+#tour-controls button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(0, 255, 200, 0.2);
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  min-width: 80px;
+}
+
+#tour-controls button:hover {
+  background: rgba(0, 255, 200, 0.4);
+}
+
+/* Bottom controls */
+#bottom-controls {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: space-between;
+  z-index: 100;
+  gap: 10px;
+}
+
+#bottom-controls button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(0, 255, 200, 0.2);
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+#bottom-controls button:hover {
+  background: rgba(0, 255, 200, 0.4);
+}
+
+/* Scale indicator */
+#scale-indicator {
+  position: absolute;
+  bottom: 60px;
+  left: 10px;
+  background: rgba(20, 20, 20, 0.6);
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: white;
+  z-index: 100;
+  display: none;
+  font-size: 0.9rem;
+}
+
+/* Media queries for different screen sizes */
+@media (max-width: 768px) {
+  #ui {
+    padding: 10px;
+  }
+  
+  #tour-controls {
+    bottom: 50px;
+  }
+  
+  #bottom-controls {
+    bottom: 5px;
+  }
+  
+  #info-panel {
+    max-height: 70vh;
+  }
+}
+
+@media (max-width: 480px) {
+  #ui h2, #info-panel h2 {
+    font-size: 1rem;
+  }
+  
+  .control-group label, .planet-fact {
+    font-size: 0.8rem;
+  }
+  
+  #tour-controls button {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+  
+  #bottom-controls button {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+  
+  #info-panel {
+    padding: 10px;
+    max-height: 60vh;
+  }
+}
+</style>
+</head>
+<body>
+    <div id="loading">
+        <div>Loading Solar System...</div>
+        <progress id="loading-progress" value="0" max="100"></progress>
+        <div id="loading-texture">Loading textures...</div>
+    </div>
+    <div id="ui">
+        <h2>Solar System Controls</h2>
+        <div class="control-group">
+            <label for="speed">Time Scale:</label>
+            <input id="speed" type="range" min="0" max="20" value="1" step="0.1">
+            <span id="speed-value">1x</span>
+        </div>
+        <div class="control-group">
+            <label for="show-orbits">Show Orbits:</label>
+            <input id="show-orbits" type="checkbox" checked>
+        </div>
+        <div class="control-group">
+            <label for="show-labels">Show Labels:</label>
+            <input id="show-labels" type="checkbox" checked>
+        </div>
+        <div class="control-group">
+            <label for="show-asteroids">Show Asteroids:</label>
+            <input id="show-asteroids" type="checkbox" checked>
+        </div>
+        <div class="control-group">
+            <label for="show-scale">Show Scale:</label>
+            <input id="show-scale" type="checkbox">
+        </div>
+        <div class="control-group">
+            <label for="auto-rotate">Auto-Rotate:</label>
+            <input id="auto-rotate" type="checkbox" checked>
+        </div>
+    </div>
+
+    <div id="info-panel">
+        <button class="close-btn" onclick="document.getElementById('info-panel').style.display='none'">Ã—</button>
+        <h2 id="info-title">Planet Info</h2>
+        <div id="info-content">
+            <div class="planet-fact"><span class="highlight">Type:</span> <span id="info-type">-</span></div>
+            <div class="planet-fact"><span class="highlight">Diameter:</span> <span id="info-diameter">-</span></div>
+            <div class="planet-fact"><span class="highlight">Distance from Sun:</span> <span id="info-distance">-</span></div>
+            <div class="planet-fact"><span class="highlight">Orbital Period:</span> <span id="info-period">-</span></div>
+            <div class="planet-fact"><span class="highlight">Rotation Period:</span> <span id="info-rotation">-</span></div>
+            <div class="planet-fact"><span class="highlight">Moons:</span> <span id="info-moons">-</span></div>
+            <div class="planet-fact"><span class="highlight">Atmosphere:</span> <span id="info-atmosphere">-</span></div>
+            <div class="planet-fact"><span class="highlight">Temperature:</span> <span id="info-temperature">-</span></div>
+            <div class="planet-fact"><span class="highlight">Fun Fact:</span> <span id="info-fact">-</span></div>
+        </div>
+    </div>
+
+    <div id="tour-controls">
+        <button id="prev-planet">Previous</button>
+        <button id="tour-btn">Start Tour</button>
+        <button id="next-planet">Next</button>
+    </div>
+
+    <div id="bottom-controls">
+        <button id="pause-button">Pause</button>
+        <button id="voice-toggle">Voice: ON</button>
+        <button id="fullscreen-button">Fullscreen</button>
+    </div>
+
+    <div id="scale-indicator">
+        <div>Scale: 1px = <span id="scale-value">1000</span> km</div>
+    </div>
+
+    <script src="js/core/three.min.js"></script>
+    <script src="js/core/orbitControls.js"></script>
+    <script src="js/core/GLTFLoader.js"></script>
+    <script src="js/core/tween.umd.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

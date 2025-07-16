@@ -121,3 +121,4 @@ I’m a student exploring **space visualization and web development**. This proj
 - 🤖 **DeepSeek AI**
 
 They helped me understand, debug, and build many features while I kept learning and improving my JavaScript and 3D graphics skills.
+# solar-system-explorer
